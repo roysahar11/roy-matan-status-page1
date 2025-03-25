@@ -1,0 +1,51 @@
+FROM python:3.10-slim
+
+# Install system dependencies - keeping only what's required by Status-Page
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \
+    libxml2-dev \
+    libxslt1-dev \
+    libffi-dev \
+    libpq-dev \
+    libssl-dev \
+    zlib1g-dev \
+    supervisor \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+
+# Create necessary directory for supervisor
+RUN mkdir -p /var/log/supervisor /etc/supervisor/conf.d
+
+# Set working directory
+WORKDIR /opt/status-page
+
+# Copy Status-Page code
+COPY . .
+
+# Copy configuration files
+COPY docker/supervisord.conf /etc/supervisor/conf.d/status-page.conf
+COPY docker/environment.py statuspage/statuspage/configuration.py
+COPY docker/entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+
+# Install Python dependencies
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Install Gunicorn configuration
+RUN cp contrib/gunicorn.py .
+
+# Run the upgrade script
+RUN ./upgrade.sh && \
+    python statuspage/manage.py collectstatic --no-input
+
+# Expose application port
+EXPOSE 8001
+
+# Set environment variables
+ENV PYTHONPATH=/opt/status-page
+
+# Set entrypoint
+ENTRYPOINT ["/entrypoint.sh"]
+
+# Run supervisor to manage all processes
+CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/supervisord.conf"]
