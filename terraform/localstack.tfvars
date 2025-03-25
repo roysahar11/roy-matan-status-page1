@@ -1,0 +1,1 @@
+aws_endpoint = "http://localhost:4566"
