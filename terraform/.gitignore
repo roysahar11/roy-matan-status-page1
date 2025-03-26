@@ -2,4 +2,4 @@
 .terraform.lock.*
 terraform.tfstate
 terraform.tfstate.*
-
+secrets.auto.tfvars
