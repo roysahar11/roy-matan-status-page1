@@ -1,4 +1,4 @@
-resource "aws_ecs_cluster" "status_page_cluster" {
+resource "aws_ecs_cluster" "status_page_production_cluster" {
   name = "roymatan-status-page-production-cluster"
 
   tags = {
@@ -40,12 +40,12 @@ resource "aws_ecs_task_definition" "status_page_nginx" {
 # ECS Service
 resource "aws_ecs_service" "status_page_nginx" {
   name            = "roymatan-status-page-nginx-service"
-  cluster         = aws_ecs_cluster.status_page_cluster.id
+  cluster         = aws_ecs_cluster.status_page_production_cluster.id
   task_definition = aws_ecs_task_definition.status_page_nginx.arn
   desired_count   = 1
   launch_type     = "FARGATE"
 
-  depends_on = [aws_ecs_cluster.status_page_cluster]
+  depends_on = [aws_ecs_cluster.status_page_production_cluster]
 
   network_configuration {
     subnets          = [aws_subnet.status_page_public.id]
