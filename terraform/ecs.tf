@@ -7,6 +7,7 @@ resource "aws_ecs_cluster" "status_page_cluster" {
   }
 }
 
+
 # ECS Task Definition for nginx
 resource "aws_ecs_task_definition" "status_page_nginx" {
   family                   = "roymatan-status-page-nginx"
@@ -48,8 +49,8 @@ resource "aws_ecs_service" "status_page_nginx" {
   depends_on = [aws_ecs_cluster.status_page_cluster]
 
   network_configuration {
-    subnets          = [aws_subnet.status_page_public.id]
-    security_groups  = [aws_security_group.status_page_nginx.id]
+    subnets          = [aws_subnet.production_public.id]
+    security_groups  = [aws_security_group.status_page_app_production.id]
     assign_public_ip = true
   }
 

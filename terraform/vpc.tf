@@ -1,5 +1,5 @@
 # Create VPC for ECS tasks
-resource "aws_vpc" "status_page_vpc" {
+resource "aws_vpc" "production_vpc" {
   cidr_block = "10.0.0.0/16"
   enable_dns_support = true
   enable_dns_hostnames = true
@@ -11,7 +11,7 @@ resource "aws_vpc" "status_page_vpc" {
 }
 
 # Create public subnet
-resource "aws_subnet" "status_page_public" {
+resource "aws_subnet" "production_public" {
   vpc_id            = aws_vpc.status_page_vpc.id
   cidr_block        = "10.0.3.0/24"
   availability_zone = "us-east-1a"
@@ -24,7 +24,7 @@ resource "aws_subnet" "status_page_public" {
 }
 
 # Internet Gateway
-resource "aws_internet_gateway" "status_page_igw" {
+resource "aws_internet_gateway" "production_igw" {
   vpc_id = aws_vpc.status_page_vpc.id
 
   tags = {
@@ -34,7 +34,7 @@ resource "aws_internet_gateway" "status_page_igw" {
 }
 
 # Route table for public subnet
-resource "aws_route_table" "status_page_public" {
+resource "aws_route_table" "production_public" {
   vpc_id = aws_vpc.status_page_vpc.id
 
   route {
@@ -49,7 +49,7 @@ resource "aws_route_table" "status_page_public" {
 }
 
 # Associate route table with public subnet
-resource "aws_route_table_association" "status_page_public" {
+resource "aws_route_table_association" "production_public" {
   subnet_id      = aws_subnet.status_page_public.id
   route_table_id = aws_route_table.status_page_public.id
 } 
