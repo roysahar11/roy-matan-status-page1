@@ -12,7 +12,7 @@ resource "aws_vpc" "production_vpc" {
 
 # Create public subnet
 resource "aws_subnet" "production_public" {
-  vpc_id            = aws_vpc.status_page_vpc.id
+  vpc_id            = aws_vpc.production_vpc.id
   cidr_block        = "10.0.3.0/24"
   availability_zone = "us-east-1a"
   map_public_ip_on_launch = true
@@ -25,7 +25,7 @@ resource "aws_subnet" "production_public" {
 
 # Internet Gateway
 resource "aws_internet_gateway" "production_igw" {
-  vpc_id = aws_vpc.status_page_vpc.id
+  vpc_id = aws_vpc.production_vpc.id
 
   tags = {
     Name  = "roymatan-status-page-igw"
@@ -35,11 +35,11 @@ resource "aws_internet_gateway" "production_igw" {
 
 # Route table for public subnet
 resource "aws_route_table" "production_public" {
-  vpc_id = aws_vpc.status_page_vpc.id
+  vpc_id = aws_vpc.production_vpc.id
 
   route {
     cidr_block = "0.0.0.0/0"
-    gateway_id = aws_internet_gateway.status_page_igw.id
+    gateway_id = aws_internet_gateway.production_igw.id
   }
 
   tags = {
@@ -50,6 +50,6 @@ resource "aws_route_table" "production_public" {
 
 # Associate route table with public subnet
 resource "aws_route_table_association" "production_public" {
-  subnet_id      = aws_subnet.status_page_public.id
-  route_table_id = aws_route_table.status_page_public.id
+  subnet_id      = aws_subnet.production_public.id
+  route_table_id = aws_route_table.production_public.id
 } 

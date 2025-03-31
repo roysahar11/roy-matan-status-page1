@@ -2,7 +2,7 @@
 resource "aws_security_group" "status_page_app_production" {
   name        = "roymatan-status-page-production-app-sg"
   description = "Security group for Roy Matan Status Page nginx container"
-  vpc_id      = aws_vpc.status_page_vpc.id
+  vpc_id      = aws_vpc.production_vpc.id
 
   ingress {
     from_port   = 80
@@ -27,13 +27,13 @@ resource "aws_security_group" "status_page_app_production" {
 resource "aws_security_group" "production_redis" {
   name        = "roymatan-status-page-production-redis-sg"
   description = "Security group for Roy Matan Status Page Redis cluster"
-  vpc_id      = aws_vpc.status_page_vpc.id
+  vpc_id      = aws_vpc.production_vpc.id
 
   ingress {
     from_port       = 6379
     to_port         = 6379
     protocol        = "tcp"
-    security_groups = [aws_security_group.status_page_nginx.id]
+    security_groups = [aws_security_group.status_page_app_production.id]
   }
 
   tags = {
