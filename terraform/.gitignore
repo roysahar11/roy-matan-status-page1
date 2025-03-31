@@ -1,5 +1,5 @@
 .terraform
-.terraform.lock.*
+.terraform.*
 terraform.tfstate
 terraform.tfstate.*
 secrets.auto.tfvars

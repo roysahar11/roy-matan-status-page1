@@ -24,5 +24,6 @@ provider "aws" {
     elasticloadbalancing = var.aws_endpoint
     route53 = var.aws_endpoint
     cloudwatch = var.aws_endpoint
+    elasticache = var.aws_endpoint
   }
 } 
