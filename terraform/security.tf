@@ -41,3 +41,22 @@ resource "aws_security_group" "production_redis" {
     Owner = "roysahar"
   }
 }
+
+# Security group for RDS
+resource "aws_security_group" "production_rds" {
+  name        = "roymatan-status-page-production-rds-sg"
+  description = "Security group for Roy Matan Status Page RDS instance"
+  vpc_id      = aws_vpc.production_vpc.id
+
+  ingress {
+    from_port       = 5432
+    to_port         = 5432
+    protocol        = "tcp"
+    security_groups = [aws_security_group.status_page_app_production.id]
+  }
+
+  tags = {
+    Name  = "roymatan-status-page-production-rds-sg"
+    Owner = "roysahar"
+  }
+}
