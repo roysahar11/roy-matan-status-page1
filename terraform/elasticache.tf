@@ -1,5 +1,3 @@
-# Security group for ElastiCache Redis
-
 # Parameter group for Redis
 resource "aws_elasticache_parameter_group" "production_redis" {
   family = "redis6.x"
@@ -9,7 +7,7 @@ resource "aws_elasticache_parameter_group" "production_redis" {
 # Subnet group for ElastiCache
 resource "aws_elasticache_subnet_group" "production_redis" {
   name       = "roymatan-status-page-production-redis-subnet-group"
-  subnet_ids = [aws_subnet.production_public.id]
+  subnet_ids = [aws_subnet.production_private.id]
 
   tags = {
     Name  = "roymatan-status-page-redis-subnet-group"

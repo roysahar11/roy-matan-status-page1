@@ -8,3 +8,8 @@ output "rds_endpoint" {
   value       = aws_db_instance.production_rds.endpoint
   description = "The DNS name of the RDS instance"
 }
+
+output "redis_endpoint" {
+  value       = "${aws_elasticache_cluster.redis.cache_nodes[0].address}:${aws_elasticache_cluster.redis.port}"
+  description = "The endpoint of the Redis cluster"
+}
