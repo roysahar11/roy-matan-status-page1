@@ -1,8 +1,8 @@
 # Security group for the nginx container
-resource "aws_security_group" "status_page_nginx" {
-  name        = "roymatan-status-page-nginx-sg"
+resource "aws_security_group" "status_page_app_production" {
+  name        = "roymatan-status-page-production-app-sg"
   description = "Security group for Roy Matan Status Page nginx container"
-  vpc_id      = aws_vpc.status_page_vpc.id
+  vpc_id      = aws_vpc.production_vpc.id
 
   ingress {
     from_port   = 80
@@ -19,7 +19,44 @@ resource "aws_security_group" "status_page_nginx" {
   }
 
   tags = {
-    Name  = "roymatan-status-page-nginx-sg"
+    Name  = "roymatan-status-page-production-app-sg"
     Owner = "roysahar"
   }
 } 
+
+resource "aws_security_group" "production_redis" {
+  name        = "roymatan-status-page-production-redis-sg"
+  description = "Security group for Roy Matan Status Page Redis cluster"
+  vpc_id      = aws_vpc.production_vpc.id
+
+  ingress {
+    from_port       = 6379
+    to_port         = 6379
+    protocol        = "tcp"
+    security_groups = [aws_security_group.status_page_app_production.id]
+  }
+
+  tags = {
+    Name  = "roymatan-status-page-redis-sg"
+    Owner = "roysahar"
+  }
+}
+
+# Security group for RDS
+resource "aws_security_group" "production_rds" {
+  name        = "roymatan-status-page-production-rds-sg"
+  description = "Security group for Roy Matan Status Page RDS instance"
+  vpc_id      = aws_vpc.production_vpc.id
+
+  ingress {
+    from_port       = 5432
+    to_port         = 5432
+    protocol        = "tcp"
+    security_groups = [aws_security_group.status_page_app_production.id]
+  }
+
+  tags = {
+    Name  = "roymatan-status-page-production-rds-sg"
+    Owner = "roysahar"
+  }
+}

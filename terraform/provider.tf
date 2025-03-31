@@ -20,8 +20,10 @@ provider "aws" {
     sts = var.aws_endpoint
     iam = var.aws_endpoint
     ec2 = var.aws_endpoint
+    rds = var.aws_endpoint
     elasticloadbalancing = var.aws_endpoint
     route53 = var.aws_endpoint
     cloudwatch = var.aws_endpoint
+    elasticache = var.aws_endpoint
   }
 } 
