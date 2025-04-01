@@ -28,9 +28,9 @@ resource "aws_iam_role_policy_attachment" "production_task_execution_role_policy
 } 
 
 # IAM policy for ECS task to access the status-page secret
-resource "aws_iam_role_policy" "ecs_task_secrets_access" {
+resource "aws_iam_role_policy" "production_secrets_access" {
   name = "ecs-task-secrets-access"
-  role = aws_iam_role.ecs_task_execution_role.id
+  role = aws_iam_role.production_task_execution_role.id
 
   policy = jsonencode({
     Version = "2012-10-17"

@@ -29,7 +29,7 @@ REDIS = {
         # Comment out `HOST` and `PORT` lines and uncomment the following if using Redis Sentinel
         # 'SENTINELS': [('mysentinel.redis.example.com', 6379)],
         # 'SENTINEL_SERVICE': 'status-page',
-        'PASSWORD': os.environ.get('REDIS_PASSWORD', ''),
+        'PASSWORD': os.environ.get('REDIS_AUTH_TOKEN', ''),
         'DATABASE': 0,
         'SSL': os.environ.get('REDIS_SSL', 'False').lower() == 'true',
         # Set this to True to skip TLS certificate verification
@@ -42,7 +42,7 @@ REDIS = {
         # Comment out `HOST` and `PORT` lines and uncomment the following if using Redis Sentinel
         # 'SENTINELS': [('mysentinel.redis.example.com', 6379)],
         # 'SENTINEL_SERVICE': 'statuspage',
-        'PASSWORD': '',
+        'PASSWORD': os.environ.get('REDIS_AUTH_TOKEN', ''),
         'DATABASE': 1,
         'SSL': os.environ.get('REDIS_SSL', 'False').lower() == 'true',
         # Set this to True to skip TLS certificate verification

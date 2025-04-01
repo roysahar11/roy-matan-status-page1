@@ -1,7 +1,7 @@
 # Subnet group for RDS
 resource "aws_db_subnet_group" "production" {
   name       = "roymatan-status-page-production-db-subnet-group"
-  subnet_ids = [aws_subnet.production_private.id]
+  subnet_ids = [aws_subnet.production_private_a.id, aws_subnet.production_private_b.id]
 
   tags = {
     Name  = "roymatan-status-page-production-db-subnet-group"

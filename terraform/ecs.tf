@@ -40,15 +40,19 @@ resource "aws_ecs_task_definition" "production_status_page_app" {
         },
         {
           name  = "REDIS_HOST"
-          value = aws_elasticache_cluster.production_redis.cache_nodes[0].address
+          value = aws_elasticache_replication_group.production_redis.primary_endpoint_address
         },
         {
           name  = "REDIS_PORT"
-          value = tostring(aws_elasticache_cluster.production_redis.port)
+          value = tostring(aws_elasticache_replication_group.production_redis.port)
         },
         {
           name  = "ALLOWED_HOSTS"
-          value = "[${aws_ecs_service.production_status_page_app.public_ip}]"
+          value = "[${aws_lb.production.dns_name}]"
+        },
+        {
+          name  = "REDIS_SKIP_TLS_VERIFY"
+          value = "true"
         }
       ]
       secrets = [
@@ -87,6 +91,10 @@ resource "aws_ecs_task_definition" "production_status_page_app" {
         {
           name      = "DJANGO_SUPERUSER_EMAIL"
           valueFrom = aws_secretsmanager_secret.production_secret.arn
+        },
+        {
+          name      = "REDIS_AUTH_TOKEN"
+          valueFrom = aws_secretsmanager_secret.production_secret.arn
         }
       ]
     }
@@ -109,11 +117,11 @@ resource "aws_ecs_service" "production_status_page_app" {
   depends_on = [
     aws_ecs_cluster.status_page_production_cluster,
     aws_db_instance.production_rds,
-    aws_elasticache_cluster.production_redis
+    aws_elasticache_replication_group.production_redis
   ]
 
   network_configuration {
-    subnets          = [aws_subnet.production_public.id]
+    subnets          = [aws_subnet.production_private_a.id, aws_subnet.production_private_b.id]
     security_groups  = [aws_security_group.status_page_app_production.id]
     assign_public_ip = true
   }
