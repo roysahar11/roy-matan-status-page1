@@ -15,3 +15,10 @@ variable "postgress_password" {
   type        = string
   sensitive   = true
 } 
+
+# Define variables for secret values
+variable "production_secret_values" {
+  description = "Map of secret key-value pairs"
+  type        = map(string)
+  sensitive   = true
+}

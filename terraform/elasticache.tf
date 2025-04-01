@@ -10,13 +10,13 @@ resource "aws_elasticache_subnet_group" "production_redis" {
   subnet_ids = [aws_subnet.production_private.id]
 
   tags = {
-    Name  = "roymatan-status-page-redis-subnet-group"
+    Name  = "roymatan-status-page-production-redis-subnet-group"
     Owner = "roysahar"
   }
 }
 
 # ElastiCache Redis cluster
-resource "aws_elasticache_cluster" "redis" {
+resource "aws_elasticache_cluster" "production_redis" {
   cluster_id           = "roymatan-status-page-production-redis"
   engine              = "redis"
   node_type           = "cache.t3.micro"
