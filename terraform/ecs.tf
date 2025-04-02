@@ -34,11 +34,11 @@ resource "aws_ecs_task_definition" "production_status_page_app" {
       environment = [
         {
           name  = "POSTGRES_HOST"
-          value = aws_db_instance.production_rds.endpoint
+          value = split(":", aws_db_instance.production_rds.endpoint)[0]
         },
         {
           name  = "POSTGRES_PORT"
-          value = "5432"
+          value = split(":", aws_db_instance.production_rds.endpoint)[1]
         },
         {
           name  = "REDIS_HOST"
@@ -55,6 +55,46 @@ resource "aws_ecs_task_definition" "production_status_page_app" {
         {
           name  = "REDIS_SKIP_TLS_VERIFY"
           value = "true"
+        },
+        {
+          name      = "POSTGRES_DB_NAME"
+          valueFrom = "${aws_secretsmanager_secret.production_secret.arn}:POSTGRES_DB_NAME::"
+        },
+        {
+          name      = "POSTGRES_USER"
+          valueFrom = "statuspage"
+        },
+        {
+          name      = "POSTGRES_PASSWORD"
+          valueFrom = "roymatan123"
+        },
+        {
+          name      = "SECRET_KEY"
+          valueFrom = "secret-key"
+        },
+        {
+          name      = "ADMIN_NAME"
+          value     = "Roy Sahar"
+        },
+        {
+          name      = "ADMIN_EMAIL"
+          value     = "roysahar@gmail.com"
+        },
+        {
+          name      = "DJANGO_SUPERUSER_PASSWORD"
+          value     = "super123"
+        },
+        {
+          name      = "DJANGO_SUPERUSER_USERNAME"
+          value     = "super"
+        },
+        {
+          name      = "DJANGO_SUPERUSER_EMAIL"
+          value     = "roysahar@gmail.com"
+        },
+        {
+          name      = "REDIS_AUTH_TOKEN"
+          value     = ""
         }
       ]
       logConfiguration = {
@@ -66,48 +106,6 @@ resource "aws_ecs_task_definition" "production_status_page_app" {
           "awslogs-create-group"  = "true"
         }
       }
-      secrets = [
-        {
-          name      = "POSTGRES_DB_NAME"
-          valueFrom = "${aws_secretsmanager_secret.production_secret.arn}:POSTGRES_DB_NAME::"
-        },
-        {
-          name      = "POSTGRES_USER"
-          valueFrom = "${aws_secretsmanager_secret.production_secret.arn}:POSTGRES_USER::"
-        },
-        {
-          name      = "POSTGRES_PASSWORD"
-          valueFrom = "${aws_secretsmanager_secret.production_secret.arn}:POSTGRES_PASSWORD::"
-        },
-        {
-          name      = "SECRET_KEY"
-          valueFrom = "${aws_secretsmanager_secret.production_secret.arn}:SECRET_KEY::"
-        },
-        {
-          name      = "ADMIN_NAME"
-          valueFrom = "${aws_secretsmanager_secret.production_secret.arn}:ADMIN_NAME::"
-        },
-        {
-          name      = "ADMIN_EMAIL"
-          valueFrom = "${aws_secretsmanager_secret.production_secret.arn}:ADMIN_EMAIL::"
-        },
-        {
-          name      = "DJANGO_SUPERUSER_PASSWORD"
-          valueFrom = "${aws_secretsmanager_secret.production_secret.arn}:DJANGO_SUPERUSER_PASSWORD::"
-        },
-        {
-          name      = "DJANGO_SUPERUSER_USERNAME"
-          valueFrom = "${aws_secretsmanager_secret.production_secret.arn}:DJANGO_SUPERUSER_USERNAME::"
-        },
-        {
-          name      = "DJANGO_SUPERUSER_EMAIL"
-          valueFrom = "${aws_secretsmanager_secret.production_secret.arn}:DJANGO_SUPERUSER_EMAIL::"
-        },
-        {
-          name      = "REDIS_AUTH_TOKEN"
-          valueFrom = "${aws_secretsmanager_secret.production_secret.arn}:REDIS_AUTH_TOKEN::"
-        }
-      ]
     }
   ])
 
