@@ -54,6 +54,6 @@ jobs:
         
       - name: Apply Terraform Configuration
         run: |
-          echo '${{ secrets.Production.STATUS_PAGE_SECRETS }}' > secrets.auto.tfvars
+          echo '${{ secrets.STATUS_PAGE_SECRETS }}' > secrets.auto.tfvars
           terraform apply -auto-approve -var="image_tag=$IMAGE_TAG"
         working-directory: ./terraform
