@@ -30,8 +30,8 @@ resource "aws_ecs_task_definition" "production_status_page_app" {
           protocol      = "tcp"
         }
       ]
-      # command = ["gunicorn", "--chdir", "/opt/status-page", "--config", "/opt/status-page/docker/gunicorn.py", "statuspage.wsgi:application"]
-      command = ["python3", "manage.py", "runserver", "0.0.0.0:8000", "--insecure"]
+      # command = ["gunicorn", "--chdir", "/opt/status-page/statuspage", "--config", "/opt/status-page/docker/gunicorn.py", "statuspage.wsgi:application"]
+      command = ["python3", "/opt/status-page/statuspage/manage.py", "runserver", "0.0.0.0:8000", "--insecure"]
       environment = [
         {
           name  = "POSTGRES_HOST"
@@ -51,7 +51,7 @@ resource "aws_ecs_task_definition" "production_status_page_app" {
         },
         {
           name  = "ALLOWED_HOSTS"
-          value = "[${aws_lb.production.dns_name}]"
+          value = "${aws_lb.production.dns_name},.compute.internal,localhost"
         },
         {
           name  = "REDIS_SKIP_TLS_VERIFY"
