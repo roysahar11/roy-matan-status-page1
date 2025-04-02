@@ -53,5 +53,5 @@ EXPOSE 8000
 WORKDIR /opt/status-page/statuspage
 
 ENTRYPOINT ["/opt/status-page/docker/entrypoint.sh"]
-CMD ["python3", "manage.py", "runserver", "0.0.0.0:8000", "--insecure"]
-# CMD ["gunicorn", "--config", "/opt/status-page/docker/gunicorn.py", "statuspage.wsgi:application"]
+# CMD ["python3", "manage.py", "runserver", "0.0.0.0:8000", "--insecure"]
+CMD ["gunicorn", "--config", "/opt/status-page/docker/gunicorn.py", "statuspage.wsgi:application"]

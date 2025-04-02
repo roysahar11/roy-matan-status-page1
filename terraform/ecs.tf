@@ -21,7 +21,7 @@ resource "aws_ecs_task_definition" "production_status_page_app" {
   container_definitions = jsonencode([
     {
       name      = "status-page"
-      image     = "${aws_ecr_repository.status_page.repository_url}:dev-debug"
+      image     = "${aws_ecr_repository.status_page.repository_url}:production-base"
       essential = true
       portMappings = [
         {
@@ -30,8 +30,8 @@ resource "aws_ecs_task_definition" "production_status_page_app" {
           protocol      = "tcp"
         }
       ]
-      # command = ["gunicorn", "--chdir", "/opt/status-page/statuspage", "--config", "/opt/status-page/docker/gunicorn.py", "statuspage.wsgi:application"]
-      command = ["python3", "/opt/status-page/statuspage/manage.py", "runserver", "0.0.0.0:8000", "--insecure"]
+      command = ["gunicorn", "--chdir", "/opt/status-page/statuspage", "--config", "/opt/status-page/docker/gunicorn.py", "statuspage.wsgi:application"]
+      # command = ["python3", "/opt/status-page/statuspage/manage.py", "runserver", "0.0.0.0:8000", "--insecure"]
       environment = [
         {
           name  = "POSTGRES_HOST"
