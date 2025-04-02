@@ -4,9 +4,9 @@ set -e
 # # Activate virtual environment (actually unnecessary when running a container image)
 # source /opt/status-page/venv/bin/activate
 
-# # Apply database migrations
-# echo "Applying database migrations..."
-# python /opt/status-page/statuspage/manage.py migrate
+# Apply database migrations - REQUIRES UPDATE - make migration conditional and not on each restart
+echo "Applying database migrations..."
+python /opt/status-page/statuspage/manage.py migrate
 
 # Update or create superuser using credentials from Secrets Manager
 if [ -n "$DJANGO_SUPERUSER_USERNAME" ] && [ -n "$DJANGO_SUPERUSER_PASSWORD" ]; then

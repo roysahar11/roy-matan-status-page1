@@ -28,22 +28,22 @@ else
   echo "Skipping local dependencies (local_requirements.txt not found)"
 fi
 
-# Apply database migrations
-echo "Applying database migrations..."
-python3 statuspage/manage.py migrate
+# # Apply database migrations
+# echo "Applying database migrations..."
+# python3 statuspage/manage.py migrate
 
-# Build the local documentation
-echo "Building documentation..."
-mkdocs build
+# # Build the local documentation
+# echo "Building documentation..."
+# mkdocs build
 
-# Collect static files
-echo "Collecting static files..."
-python3 statuspage/manage.py collectstatic --no-input
+# # Collect static files
+# echo "Collecting static files..."
+# python3 statuspage/manage.py collectstatic --no-input
 
-# Clean up stale data
-echo "Cleaning up stale data..."
-python3 statuspage/manage.py remove_stale_contenttypes --no-input
-python3 statuspage/manage.py clearsessions
-python3 statuspage/manage.py clearcache
+## Clean up stale data
+# echo "Cleaning up stale data..."
+# python3 statuspage/manage.py remove_stale_contenttypes --no-input
+# python3 statuspage/manage.py clearsessions
+# python3 statuspage/manage.py clearcache
 
 echo "Docker upgrade complete!" 
