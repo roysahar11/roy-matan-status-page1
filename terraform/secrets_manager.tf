@@ -1,5 +1,5 @@
 resource "aws_secretsmanager_secret" "production_secret" {
-  name        = "roymatan-status-page-secret"
+  name        = "roymatan-status-page-production-secret"
   description = "Secret for storing sensitive data for the status page application"
   tags = {
     Name  = "roymatan-status-page-secret"

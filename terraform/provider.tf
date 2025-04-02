@@ -22,8 +22,10 @@ provider "aws" {
     ec2 = var.aws_endpoint
     rds = var.aws_endpoint
     elasticloadbalancing = var.aws_endpoint
+    elasticloadbalancingv2 = var.aws_endpoint
     route53 = var.aws_endpoint
     cloudwatch = var.aws_endpoint
     elasticache = var.aws_endpoint
+    secretsmanager = var.aws_endpoint
   }
 } 

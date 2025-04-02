@@ -10,7 +10,7 @@ output "rds_endpoint" {
 }
 
 output "redis_endpoint" {
-  value       = "${aws_elasticache_replication_group.production_redis.primary_endpoint_address}:${aws_elasticache_replication_group.production_redis.port}"
-  description = "The endpoint of the Redis cluster"
+  description = "The Redis endpoint"
+  value       = "${aws_elasticache_cluster.production_redis.cache_nodes[0].address}:${aws_elasticache_cluster.production_redis.port}"
 }
 

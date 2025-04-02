@@ -1,6 +1,6 @@
 # Parameter group for Redis
 resource "aws_elasticache_parameter_group" "production_redis" {
-  family = "redis6.x"
+  family = "redis6.2"
   name   = "roymatan-status-page-production-redis-params"
 }
 
@@ -15,23 +15,20 @@ resource "aws_elasticache_subnet_group" "production_redis" {
   }
 }
 
-# ElastiCache Redis replication group (multi-node)
-resource "aws_elasticache_replication_group" "production_redis" {
-  replication_group_id = "roymatan-status-page-redis-rg"
-  description         = "Redis cluster for Status Page"
-  engine             = "redis"
-  engine_version     = "6.x"
-  node_type          = "cache.t3.micro"
-  num_cache_clusters = 2
+# ElastiCache Redis cluster (single node for LocalStack)
+resource "aws_elasticache_cluster" "production_redis" {
+  cluster_id           = "roymatan-status-page-redis"
+  engine              = "redis"
+  engine_version      = "6.2"
+  node_type           = "cache.t2.micro"
+  num_cache_nodes     = 1
   parameter_group_name = aws_elasticache_parameter_group.production_redis.name
-  port               = 6379
-  security_group_ids = [aws_security_group.production_redis.id]
-  subnet_group_name  = aws_elasticache_subnet_group.production_redis.name
-  transit_encryption_enabled = true
-  auth_token        = jsondecode(aws_secretsmanager_secret_version.production_secret_version.secret_string)["REDIS_AUTH_TOKEN"]
+  port                = 6379
+  security_group_ids  = [aws_security_group.production_redis.id]
+  subnet_group_name   = aws_elasticache_subnet_group.production_redis.name
 
   tags = {
-    Name  = "roymatan-status-page-production-redis-replication-group"
+    Name  = "roymatan-status-page-production-redis-cluster"
     Owner = "roysahar"
   }
 }

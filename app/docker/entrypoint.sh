@@ -28,5 +28,5 @@ print('Superuser created' if created else 'Superuser updated');
 "
 fi
 
-# Start Gunicorn with the provided configuration
-exec gunicorn --config /opt/status-page/docker/gunicorn.py statuspage.wsgi:application
+# Execute the command passed to docker run
+exec "$@"

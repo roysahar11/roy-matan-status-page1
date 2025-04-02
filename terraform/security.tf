@@ -36,6 +36,13 @@ resource "aws_security_group" "production_redis" {
     security_groups = [aws_security_group.status_page_app_production.id]
   }
 
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
   tags = {
     Name  = "roymatan-status-page-production-redis-sg"
     Owner = "roysahar"
