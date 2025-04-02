@@ -1,6 +1,8 @@
 resource "aws_secretsmanager_secret" "production_secret" {
-  name        = "roymatan-status-page-production-secret"
+  name_prefix   = "roymatan-status-page-production-secret-"
   description = "Secret for storing sensitive data for the status page application"
+  recovery_window_in_days = 0  # Set to 0 to allow deletion without waiting
+
   tags = {
     Name  = "roymatan-status-page-secret"
     Owner = "roysahar"

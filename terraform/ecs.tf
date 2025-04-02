@@ -21,7 +21,7 @@ resource "aws_ecs_task_definition" "production_status_page_app" {
   container_definitions = jsonencode([
     {
       name      = "status-page"
-      image     = "${aws_ecr_repository.status_page.repository_url}:0.0.1"
+      image     = "${aws_ecr_repository.status_page.repository_url}:roy-never-delete"
       essential = true
       portMappings = [
         {
@@ -69,43 +69,43 @@ resource "aws_ecs_task_definition" "production_status_page_app" {
       secrets = [
         {
           name      = "POSTGRES_DB_NAME"
-          valueFrom = "${aws_secretsmanager_secret.production_secret.arn}:POSTGRES_DB_NAME::AWSCURRENT"
+          valueFrom = "${aws_secretsmanager_secret.production_secret.arn}:POSTGRES_DB_NAME::"
         },
         {
           name      = "POSTGRES_USER"
-          valueFrom = "${aws_secretsmanager_secret.production_secret.arn}:POSTGRES_USER::AWSCURRENT"
+          valueFrom = "${aws_secretsmanager_secret.production_secret.arn}:POSTGRES_USER::"
         },
         {
           name      = "POSTGRES_PASSWORD"
-          valueFrom = "${aws_secretsmanager_secret.production_secret.arn}:POSTGRES_PASSWORD::AWSCURRENT"
+          valueFrom = "${aws_secretsmanager_secret.production_secret.arn}:POSTGRES_PASSWORD::"
         },
         {
           name      = "SECRET_KEY"
-          valueFrom = "${aws_secretsmanager_secret.production_secret.arn}:SECRET_KEY::AWSCURRENT"
+          valueFrom = "${aws_secretsmanager_secret.production_secret.arn}:SECRET_KEY::"
         },
         {
           name      = "ADMIN_NAME"
-          valueFrom = "${aws_secretsmanager_secret.production_secret.arn}:ADMIN_NAME::AWSCURRENT"
+          valueFrom = "${aws_secretsmanager_secret.production_secret.arn}:ADMIN_NAME::"
         },
         {
           name      = "ADMIN_EMAIL"
-          valueFrom = "${aws_secretsmanager_secret.production_secret.arn}:ADMIN_EMAIL::AWSCURRENT"
+          valueFrom = "${aws_secretsmanager_secret.production_secret.arn}:ADMIN_EMAIL::"
         },
         {
           name      = "DJANGO_SUPERUSER_PASSWORD"
-          valueFrom = "${aws_secretsmanager_secret.production_secret.arn}:DJANGO_SUPERUSER_PASSWORD::AWSCURRENT"
+          valueFrom = "${aws_secretsmanager_secret.production_secret.arn}:DJANGO_SUPERUSER_PASSWORD::"
         },
         {
           name      = "DJANGO_SUPERUSER_USERNAME"
-          valueFrom = "${aws_secretsmanager_secret.production_secret.arn}:DJANGO_SUPERUSER_USERNAME::AWSCURRENT"
+          valueFrom = "${aws_secretsmanager_secret.production_secret.arn}:DJANGO_SUPERUSER_USERNAME::"
         },
         {
           name      = "DJANGO_SUPERUSER_EMAIL"
-          valueFrom = "${aws_secretsmanager_secret.production_secret.arn}:DJANGO_SUPERUSER_EMAIL::AWSCURRENT"
+          valueFrom = "${aws_secretsmanager_secret.production_secret.arn}:DJANGO_SUPERUSER_EMAIL::"
         },
         {
           name      = "REDIS_AUTH_TOKEN"
-          valueFrom = "${aws_secretsmanager_secret.production_secret.arn}:REDIS_AUTH_TOKEN::AWSCURRENT"
+          valueFrom = "${aws_secretsmanager_secret.production_secret.arn}:REDIS_AUTH_TOKEN::"
         }
       ]
     }

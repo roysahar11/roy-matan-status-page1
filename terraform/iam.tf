@@ -62,7 +62,8 @@ resource "aws_iam_role_policy" "production_execution_secrets_access" {
       {
         Effect = "Allow"
         Action = [
-          "secretsmanager:GetSecretValue"
+          "secretsmanager:GetSecretValue",
+          "secretsmanager:DescribeSecret"
         ]
         Resource = [
           aws_secretsmanager_secret.production_secret.arn
@@ -118,22 +119,23 @@ resource "aws_iam_role" "production_task_role" {
 }
 
 # Task role policy for runtime permissions
-# resource "aws_iam_role_policy" "production_task_role_policy" {
-#   name = "roymatan-status-page-production-task-policy"
-#   role = aws_iam_role.production_task_role.id
+resource "aws_iam_role_policy" "production_task_role_policy" {
+  name = "roymatan-status-page-production-task-policy"
+  role = aws_iam_role.production_task_role.id
 
-#   policy = jsonencode({
-#     Version = "2012-10-17"
-#     Statement = [
-#       {
-#         Effect = "Allow"
-#         Action = [
-#           "secretsmanager:GetSecretValue"
-#         ]
-#         Resource = [
-#           aws_secretsmanager_secret.production_secret.arn
-#         ]
-#       }
-#     ]
-#   })
-# }
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Action = [
+          "secretsmanager:GetSecretValue",
+          "secretsmanager:DescribeSecret"
+        ]
+        Resource = [
+          aws_secretsmanager_secret.production_secret.arn
+        ]
+      }
+    ]
+  })
+}

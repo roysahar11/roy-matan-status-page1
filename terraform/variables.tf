@@ -4,17 +4,17 @@
 #   default     = "http://localhost:4566"
 # }
 
-variable "postgress_username" {
-  description = "Username for the RDS instance"
-  type        = string
-  default     = "admin"
-}
+# variable "postgress_username" {
+#   description = "Username for the RDS instance"
+#   type        = string
+#   default     = "admin"
+# }
 
-variable "postgress_password" {
-  description = "Password for the RDS instance"
-  type        = string
-  sensitive   = true
-} 
+# variable "postgress_password" {
+#   description = "Password for the RDS instance"
+#   type        = string
+#   sensitive   = true
+# } 
 
 # Define variables for secret values
 variable "production_secret_values" {
