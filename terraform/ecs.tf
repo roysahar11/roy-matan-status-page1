@@ -21,7 +21,7 @@ resource "aws_ecs_task_definition" "production_status_page_app" {
   container_definitions = jsonencode([
     {
       name      = "status-page"
-      image     = "${aws_ecr_repository.status_page.repository_url}:roy-never-delete"
+      image     = "${aws_ecr_repository.status_page.repository_url}:dev-debug"
       essential = true
       portMappings = [
         {
@@ -30,7 +30,8 @@ resource "aws_ecs_task_definition" "production_status_page_app" {
           protocol      = "tcp"
         }
       ]
-      command = ["gunicorn", "--config", "/opt/status-page/docker/gunicorn.py", "statuspage.wsgi:application"]
+      # command = ["gunicorn", "--chdir", "/opt/status-page", "--config", "/opt/status-page/docker/gunicorn.py", "statuspage.wsgi:application"]
+      command = ["python3", "manage.py", "runserver", "0.0.0.0:8000", "--insecure"]
       environment = [
         {
           name  = "POSTGRES_HOST"
@@ -54,23 +55,27 @@ resource "aws_ecs_task_definition" "production_status_page_app" {
         },
         {
           name  = "REDIS_SKIP_TLS_VERIFY"
-          value = "true"
+          value = "false"
+        },
+        {
+          name = "REDIS_SSL"
+          value = "false"
         },
         {
           name      = "POSTGRES_DB_NAME"
-          valueFrom = "${aws_secretsmanager_secret.production_secret.arn}:POSTGRES_DB_NAME::"
+          value     = "statuspage"
         },
         {
           name      = "POSTGRES_USER"
-          valueFrom = "statuspage"
+          value     = "statuspage"
         },
         {
           name      = "POSTGRES_PASSWORD"
-          valueFrom = "roymatan123"
+          value     = "roymatan123"
         },
         {
           name      = "SECRET_KEY"
-          valueFrom = "secret-key"
+          value =     "secret-key"
         },
         {
           name      = "ADMIN_NAME"

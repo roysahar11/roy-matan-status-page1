@@ -28,5 +28,12 @@ print('Superuser created' if created else 'Superuser updated');
 "
 fi
 
+# Debugging: Print directory contents and Python path
+echo "DEBUG: Listing contents of /opt/status-page:"
+ls -la /opt/status-page
+echo "DEBUG: Python sys.path:"
+python -c "import sys; import os; print(sys.path); print('Current directory:', os.getcwd())"
+echo "DEBUG: End of debug info. Executing command: $@"
+
 # Execute the command passed to docker run
 exec "$@"
