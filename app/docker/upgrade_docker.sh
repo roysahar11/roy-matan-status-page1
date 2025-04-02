@@ -16,12 +16,12 @@ echo "Using ${PYTHON_VERSION}"
 
 # Install required Python packages
 echo "Installing core dependencies..."
-pip install -r --no-cache-dir requirements.txt
+pip install --no-cache-dir -r requirements.txt
 
 # Install optional packages (if any)
 if [ -s "local_requirements.txt" ]; then
   echo "Installing local dependencies..."
-  pip install -r --no-cache-dir local_requirements.txt
+  pip install --no-cache-dir -r local_requirements.txt
 elif [ -f "local_requirements.txt" ]; then
   echo "Skipping local dependencies (local_requirements.txt is empty)"
 else

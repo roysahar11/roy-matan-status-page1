@@ -33,7 +33,7 @@ WORKDIR /opt/status-page
 
 # Create non-root user
 RUN groupadd -r status-page && \
-    useradd -r -g status-page status-page
+    useradd -r -m -g status-page status-page
 
 COPY --chown=status-page:status-page . .
 

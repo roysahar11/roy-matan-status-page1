@@ -27,5 +27,6 @@ provider "aws" {
     cloudwatch = var.aws_endpoint
     elasticache = var.aws_endpoint
     secretsmanager = var.aws_endpoint
+    ecr = var.aws_endpoint
   }
 } 

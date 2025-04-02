@@ -20,11 +20,11 @@ resource "aws_lb_target_group" "production_alb_tg" {
   vpc_id      = aws_vpc.production_vpc.id
   target_type = "ip"
 
-  # Simplified health check
   health_check {
     enabled             = true
     healthy_threshold   = 2
     interval            = 30
+    matcher            = "200"
     path               = "/health/"
     port               = "traffic-port"
     protocol           = "HTTP"
