@@ -1,0 +1,59 @@
+name: Build and Push to AWS ECR
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  push_to_aws_ecr:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v3
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Log in to AWS ECR
+        run: aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 992382545251.dkr.ecr.us-east-1.amazonaws.com
+
+        
+      - name: Get Commit Hash
+        run: echo "IMAGE_TAG=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
+
+      # - name: Get latest image tag from ECR
+
+      - name: Build image
+        run: docker build -t roymatan-status-page app/
+    
+      - name: Tag image with new version
+        run: |
+          docker tag roymatan-status-page:latest 992382545251.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/roymatan-status-page:$IMAGE_TAG
+          docker tag roymatan-status-page:latest 992382545251.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/roymatan-status-page:latest
+
+      - name: Push image to AWS ECR
+        run: |
+          docker push 992382545251.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/roymatan-status-page:$IMAGE_TAG
+          docker push 992382545251.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/roymatan-status-page:latest
+    
+
+      - name: Install Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: latest
+
+      - name: Initialize Terraform
+        run: terraform init
+        working-directory: ./terraform
+        
+      - name: Apply Terraform Configuration
+        run: |
+          echo '${{ secrets.STATUS_PAGE_SECRETS }}' > secrets.auto.tfvars
+          terraform apply -auto-approve -var="image_tag=$IMAGE_TAG"
+          working-directory: ./terraform
