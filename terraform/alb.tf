@@ -25,7 +25,7 @@ resource "aws_lb_target_group" "production_alb_tg" {
     healthy_threshold   = 2
     interval            = 30
     matcher            = "200"
-    path               = "/health/"
+    path               = "/"
     port               = "traffic-port"
     protocol           = "HTTP"
     timeout            = 5
@@ -38,7 +38,7 @@ resource "aws_lb_target_group" "production_alb_tg" {
   }
 }
 
-# ALB Listener
+# ALB HTTP Listener - for development/testing
 resource "aws_lb_listener" "status_page" {
   load_balancer_arn = aws_lb.production.arn
   port              = "80"
@@ -49,3 +49,34 @@ resource "aws_lb_listener" "status_page" {
     target_group_arn = aws_lb_target_group.production_alb_tg.arn
   }
 }
+
+# Commented out HTTPS configuration for future use
+
+# ALB HTTPS Listener
+# resource "aws_lb_listener" "status_page_https" {
+#   load_balancer_arn = aws_lb.production.arn
+#   port              = "443"
+#   protocol          = "HTTPS"
+#   ssl_policy        = "ELBSecurityPolicy-2016-08"
+#   certificate_arn   = aws_acm_certificate.status_page_cert.arn
+
+#   default_action {
+#     type             = "forward"
+#     target_group_arn = aws_lb_target_group.production_alb_tg.arn
+#   }
+# }
+
+# # ACM Certificate for HTTPS
+# resource "aws_acm_certificate" "status_page_cert" {
+#   domain_name       = "your-domain-name.com"  # Replace with your actual domain
+#   validation_method = "DNS"
+
+#   tags = {
+#     Name  = "roymatan-status-page-certificate"
+#     Owner = "roysahar"
+#   }
+
+#   lifecycle {
+#     create_before_destroy = true
+#   }
+# }

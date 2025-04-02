@@ -5,8 +5,8 @@ resource "aws_security_group" "status_page_app_production" {
   vpc_id      = aws_vpc.production_vpc.id
 
   ingress {
-    from_port   = 80
-    to_port     = 80
+    from_port   = 8000
+    to_port     = 8000
     protocol    = "tcp"
     security_groups = [aws_security_group.production_alb.id]
   }
@@ -80,6 +80,14 @@ resource "aws_security_group" "production_alb" {
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
+  
+  ingress {
+    description = "HTTPS from Internet"
+    from_port   = 443
+    to_port     = 443
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
 
   egress {
     from_port   = 0
@@ -94,8 +102,8 @@ resource "aws_security_group" "production_alb" {
   }
 }
 
-resource "aws_security_group" "production_secrets_vpc_endpoint" {
-  name        = "vpc-endpoint-sg"
+resource "aws_security_group" "production_vpc_endpoints" {
+  name        = "vpc-endpoints-sg"
   description = "Security group for VPC Endpoints"
   vpc_id      = aws_vpc.production_vpc.id
 

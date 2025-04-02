@@ -10,26 +10,6 @@ resource "aws_vpc" "production_vpc" {
   }
 }
 
-# Elastic IP for NAT Gateway
-resource "aws_eip" "nat" {
-  domain = "vpc"
-  tags = {
-    Name  = "roymatan-status-page-nat-eip"
-    Owner = "roysahar"
-  }
-}
-
-# NAT Gateway
-resource "aws_nat_gateway" "nat" {
-  allocation_id = aws_eip.nat.id
-  subnet_id     = aws_subnet.production_public_a.id  # Place NAT Gateway in public subnet
-
-  tags = {
-    Name  = "roymatan-status-page-nat-gateway"
-    Owner = "roysahar"
-  }
-}
-
 # Public Subnets
 resource "aws_subnet" "production_public_a" {
   vpc_id            = aws_vpc.production_vpc.id
@@ -108,11 +88,6 @@ resource "aws_route_table" "production_public" {
 # Route table for private subnet
 resource "aws_route_table" "production_private" {
   vpc_id = aws_vpc.production_vpc.id
-
-  route {
-    cidr_block     = "0.0.0.0/0"
-    nat_gateway_id = aws_nat_gateway.nat.id
-  }
 
   tags = {
     Name  = "roymatan-status-page-private-rt"

@@ -13,19 +13,20 @@ resource "aws_ecs_task_definition" "production_status_page_app" {
   family                   = "roymatan-status-page-app"
   network_mode             = "awsvpc"
   requires_compatibilities = ["FARGATE"]
-  cpu                      = "256"
-  memory                   = "512"
+  cpu                      = "512"
+  memory                   = "1024"
   execution_role_arn       = aws_iam_role.production_task_execution_role.arn
+  task_role_arn           = aws_iam_role.production_task_role.arn
 
   container_definitions = jsonencode([
     {
       name      = "status-page"
-      image     = "python:3.10-slim"
+      image     = "${aws_ecr_repository.status_page.repository_url}:latest"
       essential = true
       portMappings = [
         {
-          containerPort = 80
-          hostPort      = 80
+          containerPort = 8000
+          hostPort      = 8000
           protocol      = "tcp"
         }
       ]
@@ -100,6 +101,18 @@ resource "aws_ecs_task_definition" "production_status_page_app" {
     }
   ])
 
+  depends_on = [
+    aws_db_instance.production_rds,
+    aws_elasticache_cluster.production_redis,
+    aws_vpc.production_vpc,
+    aws_subnet.production_private_a,
+    aws_subnet.production_private_b,
+    aws_ecr_repository.status_page,
+    aws_secretsmanager_secret.production_secret,
+    aws_secretsmanager_secret_version.production_secret_version,
+    aws_vpc_endpoint.production_secretsmanager
+  ]
+
   tags = {
     Name  = "roymatan-status-page-production-app-task"
     Owner = "roysahar"
@@ -116,15 +129,26 @@ resource "aws_ecs_service" "production_status_page_app" {
 
   depends_on = [
     aws_ecs_cluster.status_page_production_cluster,
-    aws_db_instance.production_rds,
-    aws_elasticache_cluster.production_redis
+    aws_ecs_task_definition.production_status_page_app,
+    aws_lb.production,
+    aws_vpc.production_vpc,
+    aws_subnet.production_public_a,
+    aws_subnet.production_public_b
   ]
 
   network_configuration {
-    subnets          = [aws_subnet.production_private_a.id, aws_subnet.production_private_b.id]
+    subnets          = [aws_subnet.production_public_a.id, aws_subnet.production_public_b.id]
     security_groups  = [aws_security_group.status_page_app_production.id]
     assign_public_ip = true
   }
+
+  load_balancer {
+    target_group_arn = aws_lb_target_group.production_alb_tg.arn
+    container_name   = "status-page"
+    container_port   = 8000
+  }
+
+  health_check_grace_period_seconds = 60
 
   tags = {
     Name  = "roymatan-status-page-app-service"

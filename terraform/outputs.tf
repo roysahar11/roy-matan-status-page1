@@ -1,8 +1,12 @@
 # Output the service endpoint
-output "status_page_endpoint" {
-  value = "http://${aws_ecs_service.production_status_page_app.network_configuration[0].assign_public_ip ? "localhost" : "private"}:80"
-  description = "The endpoint to access Roy Matan Status Page"
+output "load_balancer_endpoint" {
+  value       = "http://${aws_lb.production.dns_name}"
+  description = "The endpoint to access the Status Page app"
 } 
+
+# output "status_page_service_endpoint" {
+#   value = "http://${aws_ecs_service.production_status_page_app.endpoint}"
+# }
 
 output "rds_endpoint" {
   value       = aws_db_instance.production_rds.endpoint
