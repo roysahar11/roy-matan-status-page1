@@ -1,8 +1,8 @@
-variable "aws_endpoint" {
-  description = "The endpoint URL"
-  type        = string
-  default     = "http://localhost:4566"
-}
+# variable "aws_endpoint" {
+#   description = "The endpoint URL"
+#   type        = string
+#   default     = "http://localhost:4566"
+# }
 
 variable "postgress_username" {
   description = "Username for the RDS instance"

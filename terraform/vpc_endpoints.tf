@@ -59,3 +59,18 @@ resource "aws_vpc_endpoint" "production_s3" {
     Owner = "roysahar"
   }
 }
+
+# CloudWatch Logs VPC Endpoint
+resource "aws_vpc_endpoint" "production_cloudwatch_logs" {
+  vpc_id             = aws_vpc.production_vpc.id
+  service_name       = "com.amazonaws.us-east-1.logs"
+  vpc_endpoint_type  = "Interface"
+  private_dns_enabled = true
+  subnet_ids         = [aws_subnet.production_private_a.id, aws_subnet.production_private_b.id]
+  security_group_ids = [aws_security_group.production_vpc_endpoints.id]
+
+  tags = {
+    Name  = "roymatan-status-page-production-cloudwatch-logs-endpoint"
+    Owner = "roysahar"
+  }
+}

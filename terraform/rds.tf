@@ -14,10 +14,10 @@ resource "aws_db_instance" "production_rds" {
   allocated_storage    = 20
   storage_type         = "gp2"
   engine              = "postgres"
-  engine_version      = "12.7"
+  engine_version      = "17.4"
   instance_class      = "db.t3.micro"
-  username           = var.postgress_username
-  password           = var.postgress_password
+  username           = var.production_secret_values["POSTGRES_USER"]
+  password           = var.production_secret_values["POSTGRES_PASSWORD"]
   db_name             = "statuspage"
   publicly_accessible = false
   skip_final_snapshot = true

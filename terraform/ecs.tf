@@ -21,7 +21,7 @@ resource "aws_ecs_task_definition" "production_status_page_app" {
   container_definitions = jsonencode([
     {
       name      = "status-page"
-      image     = "${aws_ecr_repository.status_page.repository_url}:latest"
+      image     = "${aws_ecr_repository.status_page.repository_url}:0.0.1"
       essential = true
       portMappings = [
         {
@@ -30,6 +30,7 @@ resource "aws_ecs_task_definition" "production_status_page_app" {
           protocol      = "tcp"
         }
       ]
+      command = ["gunicorn", "--config", "/opt/status-page/docker/gunicorn.py", "statuspage.wsgi:application"]
       environment = [
         {
           name  = "POSTGRES_HOST"
@@ -56,46 +57,55 @@ resource "aws_ecs_task_definition" "production_status_page_app" {
           value = "true"
         }
       ]
+      logConfiguration = {
+        logDriver = "awslogs"
+        options = {
+          "awslogs-group"         = "/ecs/roymatan-status-page"
+          "awslogs-region"        = "us-east-1"
+          "awslogs-stream-prefix" = "ecs"
+          "awslogs-create-group"  = "true"
+        }
+      }
       secrets = [
         {
           name      = "POSTGRES_DB_NAME"
-          valueFrom = aws_secretsmanager_secret.production_secret.arn
+          valueFrom = "${aws_secretsmanager_secret.production_secret.arn}:POSTGRES_DB_NAME::AWSCURRENT"
         },
         {
           name      = "POSTGRES_USER"
-          valueFrom = aws_secretsmanager_secret.production_secret.arn
+          valueFrom = "${aws_secretsmanager_secret.production_secret.arn}:POSTGRES_USER::AWSCURRENT"
         },
         {
-          name      = "POSTGRESS_PASSWORD"
-          valueFrom = aws_secretsmanager_secret.production_secret.arn
+          name      = "POSTGRES_PASSWORD"
+          valueFrom = "${aws_secretsmanager_secret.production_secret.arn}:POSTGRES_PASSWORD::AWSCURRENT"
         },
         {
           name      = "SECRET_KEY"
-          valueFrom = aws_secretsmanager_secret.production_secret.arn
+          valueFrom = "${aws_secretsmanager_secret.production_secret.arn}:SECRET_KEY::AWSCURRENT"
         },
         {
           name      = "ADMIN_NAME"
-          valueFrom = aws_secretsmanager_secret.production_secret.arn
+          valueFrom = "${aws_secretsmanager_secret.production_secret.arn}:ADMIN_NAME::AWSCURRENT"
         },
         {
           name      = "ADMIN_EMAIL"
-          valueFrom = aws_secretsmanager_secret.production_secret.arn
+          valueFrom = "${aws_secretsmanager_secret.production_secret.arn}:ADMIN_EMAIL::AWSCURRENT"
         },
         {
           name      = "DJANGO_SUPERUSER_PASSWORD"
-          valueFrom = aws_secretsmanager_secret.production_secret.arn
+          valueFrom = "${aws_secretsmanager_secret.production_secret.arn}:DJANGO_SUPERUSER_PASSWORD::AWSCURRENT"
         },
         {
           name      = "DJANGO_SUPERUSER_USERNAME"
-          valueFrom = aws_secretsmanager_secret.production_secret.arn
+          valueFrom = "${aws_secretsmanager_secret.production_secret.arn}:DJANGO_SUPERUSER_USERNAME::AWSCURRENT"
         },
         {
           name      = "DJANGO_SUPERUSER_EMAIL"
-          valueFrom = aws_secretsmanager_secret.production_secret.arn
+          valueFrom = "${aws_secretsmanager_secret.production_secret.arn}:DJANGO_SUPERUSER_EMAIL::AWSCURRENT"
         },
         {
           name      = "REDIS_AUTH_TOKEN"
-          valueFrom = aws_secretsmanager_secret.production_secret.arn
+          valueFrom = "${aws_secretsmanager_secret.production_secret.arn}:REDIS_AUTH_TOKEN::AWSCURRENT"
         }
       ]
     }
@@ -130,14 +140,11 @@ resource "aws_ecs_service" "production_status_page_app" {
   depends_on = [
     aws_ecs_cluster.status_page_production_cluster,
     aws_ecs_task_definition.production_status_page_app,
-    aws_lb.production,
-    aws_vpc.production_vpc,
-    aws_subnet.production_public_a,
-    aws_subnet.production_public_b
+    aws_lb.production
   ]
 
   network_configuration {
-    subnets          = [aws_subnet.production_public_a.id, aws_subnet.production_public_b.id]
+    subnets          = [aws_subnet.production_private_a.id, aws_subnet.production_private_b.id]
     security_groups  = [aws_security_group.status_page_app_production.id]
     assign_public_ip = true
   }

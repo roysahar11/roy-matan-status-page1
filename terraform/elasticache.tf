@@ -1,6 +1,6 @@
 # Parameter group for Redis
 resource "aws_elasticache_parameter_group" "production_redis" {
-  family = "redis6.2"
+  family = "redis7"
   name   = "roymatan-status-page-production-redis-params"
 }
 
@@ -19,8 +19,8 @@ resource "aws_elasticache_subnet_group" "production_redis" {
 resource "aws_elasticache_cluster" "production_redis" {
   cluster_id           = "roymatan-status-page-redis"
   engine              = "redis"
-  engine_version      = "6.2"
-  node_type           = "cache.t2.micro"
+  engine_version      = "7.1"
+  node_type           = "cache.t3.micro"
   num_cache_nodes     = 1
   parameter_group_name = aws_elasticache_parameter_group.production_redis.name
   port                = 6379
