@@ -48,9 +48,7 @@ jobs:
             992382545251.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/roymatan-status-page:${{ env.IMAGE_TAG }}
             992382545251.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/roymatan-status-page:latest
           cache-from: type=registry,ref=992382545251.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/roymatan-status-page:latest
-          cache-to: type=inline
-          build-args: |
-            BUILDKIT_INLINE_CACHE=1
+          cache-to: type=registry,ref=992382545251.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/roymatan-status-page:latest,mode=max
 
       - name: Install Terraform
         uses: hashicorp/setup-terraform@v3
@@ -77,6 +75,13 @@ jobs:
           TF_LOG=DEBUG TF_LOG_PATH=./terraform-debug.log terraform plan -var="image_tag=$IMAGE_TAG" -out=tfplan
           echo "Plan debug log:"
           cat ./terraform-debug.log
+        working-directory: ./terraform
+
+      - name: Terraform Plan
+        run: |
+          echo "Creating secrets file..."
+          echo '${{ secrets.STATUS_PAGE_SECRETS }}' > secrets.auto.tfvars
+          terraform plan -var="image_tag=$IMAGE_TAG" -out=tfplan
         working-directory: ./terraform
 
       - name: Terraform Apply
