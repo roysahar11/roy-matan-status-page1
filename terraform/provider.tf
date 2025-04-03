@@ -11,6 +11,16 @@ terraform {
     region         = "us-east-1"
     encrypt        = true
     dynamodb_table = "roymatan-status-page-terraform-locks"
+    dynamodb_table_name = "roymatan-status-page-terraform-locks"
+    dynamodb_table_tags = {
+      Name  = "roymatan-status-page-terraform-locks"
+      Owner = "roysahar"
+    }
+    retry_max_attempts = 4
+    retry_min_delay    = 5
+    retry_max_delay    = 30
+    dynamodb_table_ttl_attribute = "TimeToLive"
+    dynamodb_table_ttl_enabled   = true
   }
 }
 

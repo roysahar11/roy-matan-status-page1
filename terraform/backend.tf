@@ -43,8 +43,34 @@ resource "aws_dynamodb_table" "terraform_locks" {
     type = "S"
   }
 
+  # Add TTL to automatically expire locks
+  ttl {
+    attribute_name = "TimeToLive"
+    enabled       = true
+  }
+
+  # Add a TTL attribute
+  attribute {
+    name = "TimeToLive"
+    type = "N"
+  }
+
   tags = {
     Name  = "roymatan-status-page-terraform-locks"
     Owner = "roysahar"
   }
+}
+
+# Add a DynamoDB table item to set TTL
+resource "aws_dynamodb_table_item" "lock_ttl" {
+  table_name = aws_dynamodb_table.terraform_locks.name
+  hash_key   = aws_dynamodb_table.terraform_locks.hash_key
+  item = jsonencode({
+    LockID = {
+      S = "terraform-state-lock"
+    }
+    TimeToLive = {
+      N = tostring(timeadd(timestamp(), "20m")) # Lock expires after 15 minutes
+    }
+  })
 } 
