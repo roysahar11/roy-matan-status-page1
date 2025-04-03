@@ -21,7 +21,7 @@ resource "aws_ecs_task_definition" "production_status_page_app" {
   container_definitions = jsonencode([
     {
       name      = "status-page"
-      image     = "${aws_ecr_repository.status_page.repository_url}:dev-debug"
+      image     = "${aws_ecr_repository.status_page.repository_url}:${var.image_tag}"
       essential = true
       portMappings = [
         {

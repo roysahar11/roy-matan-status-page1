@@ -26,4 +26,5 @@ variable "production_secret_values" {
 variable "image_tag" {
   description = "The image tag to use for ECS deployment"
   type        = string
+  default     = "latest"
 }
