@@ -64,7 +64,10 @@ resource "aws_dynamodb_table_item" "lock_ttl" {
       S = "terraform-state-lock"
     }
     TimeToLive = {
-      N = tostring(timeadd(timestamp(), "20m")) # Lock expires after 15 minutes
+      N = tostring(time_static.current_time.unix + 1200) # Lock expires after 20 minutes (1200 seconds)
     }
   })
-} 
+}
+
+# Create a static timestamp for the TTL calculation
+resource "time_static" "current_time" {} 
