@@ -19,17 +19,19 @@ A containerized, highly available, and secure implementation of the [Status-Page
 
 ## Introduction
 
-This project is a containerized implementation of the [Status-Page](https://github.com/Status-Page/Status-Page) open-source status page software, with custom infrastructure, CI/CD pipeline, and deployment architecture. While the core application code is based on the original Status-Page project, the containerization, infrastructure as code, and deployment architecture are custom implementations by Roy Sahar and Matan Baron.
+This project is a containerized implementation of the [Status-Page](https://github.com/Status-Page/Status-Page) open-source status page software, with custom infrastructure, CI/CD pipeline, and deployment architecture. While the core application code is based on the original Status-Page project, the containerization, infrastructure as code, and deployment architecture are custom implementations.
 
 The project aims to provide a robust, scalable, and secure status page solution that can be easily deployed and maintained in AWS environments. It leverages modern DevOps practices, infrastructure as code, and containerization to achieve these goals.
 
-This repository serves as a proof of concept (POC) that demonstrates the implementation of the Status-Page application in a production-ready environment. While not all planned features are fully implemented yet, the core functionality is working and ready for presentation.
+This repository serves as a proof of concept (POC) that demonstrates the implementation of the Status-Page application in a production-ready environment, while not all planned features are fully implemented yet.
 
 ## Architecture Overview
 
 The architecture follows a modern cloud-native approach with separate staging and production environments, containerized applications, and infrastructure as code principles.
 
 ### High-Level Architecture
+
+![Status Page Infrastructure Diagram](docs/Status%20Page%20Infrastructure%20Diagram.png)
 
 The system is deployed across multiple AWS services with a focus on security, scalability, and high availability:
 
@@ -131,6 +133,8 @@ VPC Endpoints are used for secure access to AWS services:
 - **CloudWatch VPC Endpoint**: For logs and metrics
 
 ## CI/CD Pipeline
+
+![CI/CD Pipeline Diagram](docs/CI_CD%20Piepline%20Diagram.png)
 
 The CI/CD pipeline is implemented using GitHub Actions and follows a structured workflow for building, testing, and deploying the application.
 
