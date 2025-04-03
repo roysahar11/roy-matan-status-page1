@@ -74,9 +74,9 @@ jobs:
         run: terraform apply -auto-approve tfplan
         working-directory: ./terraform
 
-      - name: Clenu secrets
-        run: |
-          rm secrets.auto.tfvars
+      - name: Clean up secrets
+        run: rm secrets.auto.tfvars
+        working-directory: ./terraform
 
 env:
   TF_LOG: INFO
