@@ -1,4 +1,5 @@
-# Roy-Matan Status Page
+# Super Status Page
+_By Roy Sahar and Matan Baron_
 
 A containerized, highly available, and secure implementation of the [Status-Page](https://github.com/Status-Page/Status-Page) open-source project, deployed on AWS infrastructure using modern DevOps practices.
 
