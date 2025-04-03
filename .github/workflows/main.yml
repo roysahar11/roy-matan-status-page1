@@ -8,6 +8,9 @@ on:
 jobs:
   build_and_deploy:
     runs-on: ubuntu-latest
+    concurrency:
+      group: ${{ github.workflow }}-${{ github.ref }}
+      cancel-in-progress: false
 
     steps:
       - name: Checkout repository
@@ -48,10 +51,22 @@ jobs:
         run: terraform init
         working-directory: ./terraform
 
-      - name: Terraform Plan
+      - name: Debug AWS API Latency
         run: |
+          echo "Testing AWS API latency..."
+          time aws sts get-caller-identity
+          time aws ecs describe-clusters --clusters roymatan-status-page-production-cluster
+          time aws ec2 describe-vpc-endpoints
+          time aws ec2 describe-security-groups
+
+      - name: Terraform Plan with Debug
+        run: |
+          echo "Creating secrets file..."
           echo '${{ secrets.STATUS_PAGE_SECRETS }}' > secrets.auto.tfvars
-          terraform plan -var="image_tag=$IMAGE_TAG" -out=tfplan
+          echo "Running Terraform plan with detailed debug output..."
+          TF_LOG=DEBUG TF_LOG_PATH=./terraform-debug.log terraform plan -var="image_tag=$IMAGE_TAG" -out=tfplan
+          echo "Plan debug log:"
+          cat ./terraform-debug.log
         working-directory: ./terraform
 
       - name: Terraform Apply

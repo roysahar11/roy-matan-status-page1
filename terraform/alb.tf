@@ -6,6 +6,11 @@ resource "aws_lb" "production" {
   security_groups    = [aws_security_group.production_alb.id]
   subnets           = [aws_subnet.production_public_a.id, aws_subnet.production_public_b.id]
 
+  depends_on = [
+    aws_vpc.production_vpc
+  ]
+
+
   tags = {
     Name  = "roymatan-status-page-production-alb"
     Owner = "roysahar"
