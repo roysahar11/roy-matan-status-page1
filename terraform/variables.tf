@@ -22,3 +22,8 @@ variable "production_secret_values" {
   type        = map(string)
   sensitive   = true
 }
+
+variable "image_tag" {
+  description = "The image tag to use for ECS deployment"
+  type        = string
+}

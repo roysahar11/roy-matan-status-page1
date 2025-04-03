@@ -1,4 +1,4 @@
-name: Build and Push to AWS ECR
+name: Build and Deploy App and Infrastructure
 
 on:
   push:
@@ -6,7 +6,7 @@ on:
       - main
 
 jobs:
-  push_to_aws_ecr:
+  build_and_deploy:
     runs-on: ubuntu-latest
 
     steps:
@@ -23,11 +23,8 @@ jobs:
       - name: Log in to AWS ECR
         run: aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 992382545251.dkr.ecr.us-east-1.amazonaws.com
 
-        
       - name: Get Commit Hash
         run: echo "IMAGE_TAG=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
-
-      # - name: Get latest image tag from ECR
 
       - name: Build image
         run: docker build -t roymatan-status-page app/
@@ -41,19 +38,22 @@ jobs:
         run: |
           docker push 992382545251.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/roymatan-status-page:$IMAGE_TAG
           docker push 992382545251.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/roymatan-status-page:latest
-    
 
       - name: Install Terraform
         uses: hashicorp/setup-terraform@v3
         with:
           terraform_version: latest
 
-      - name: Initialize Terraform
+      - name: Terraform Init
         run: terraform init
         working-directory: ./terraform
-        
-      - name: Apply Terraform Configuration
+
+      - name: Terraform Plan
         run: |
           echo '${{ secrets.STATUS_PAGE_SECRETS }}' > secrets.auto.tfvars
-          terraform apply -auto-approve -var="image_tag=$IMAGE_TAG"
+          terraform plan -var="image_tag=$IMAGE_TAG" -out=tfplan
+        working-directory: ./terraform
+
+      - name: Terraform Apply
+        run: terraform apply -auto-approve tfplan
         working-directory: ./terraform

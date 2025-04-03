@@ -5,13 +5,13 @@ terraform {
     }
   }
 
-  backend "s3" {
-    bucket         = "roymatan-status-page-terraform-state"
-    key            = "terraform.tfstate"
-    region         = "us-east-1"
-    encrypt        = true
-    dynamodb_table = "roymatan-status-page-terraform-locks"
-  }
+  # backend "s3" {
+  #   bucket         = "roymatan-status-page-terraform-state"
+  #   key            = "terraform.tfstate"
+  #   region         = "us-east-1"
+  #   encrypt        = true
+  #   dynamodb_table = "roymatan-status-page-terraform-locks"
+  # }
 }
 
 # provider "aws" {
