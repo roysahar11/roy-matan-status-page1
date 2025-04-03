@@ -49,12 +49,6 @@ resource "aws_dynamodb_table" "terraform_locks" {
     enabled       = true
   }
 
-  # Add a TTL attribute
-  attribute {
-    name = "TimeToLive"
-    type = "N"
-  }
-
   tags = {
     Name  = "roymatan-status-page-terraform-locks"
     Owner = "roysahar"
