@@ -23,32 +23,24 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ secrets.AWS_REGION }}
 
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
-        with:
-          version: latest
-
       - name: Log in to AWS ECR
         run: aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 992382545251.dkr.ecr.us-east-1.amazonaws.com
 
       - name: Get Commit Hash
         run: echo "IMAGE_TAG=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
 
-      - name: Pull previous image for caching
+      - name: Build image
+        run: docker build -t roymatan-status-page app/
+    
+      - name: Tag image with new version
         run: |
-          echo "Pulling previous image for layer caching..."
-          docker pull 992382545251.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/roymatan-status-page:latest || true
+          docker tag roymatan-status-page:latest 992382545251.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/roymatan-status-page:$IMAGE_TAG
+          docker tag roymatan-status-page:latest 992382545251.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/roymatan-status-page:latest
 
-      - name: Build and push image with caching
-        uses: docker/build-push-action@v3
-        with:
-          context: ./app
-          push: true
-          tags: |
-            992382545251.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/roymatan-status-page:${{ env.IMAGE_TAG }}
-            992382545251.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/roymatan-status-page:latest
-          cache-from: type=registry,ref=992382545251.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/roymatan-status-page:latest
-          cache-to: type=registry,ref=992382545251.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/roymatan-status-page:latest,mode=max
+      - name: Push image to AWS ECR
+        run: |
+          docker push 992382545251.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/roymatan-status-page:$IMAGE_TAG
+          docker push 992382545251.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/roymatan-status-page:latest
 
       - name: Install Terraform
         uses: hashicorp/setup-terraform@v3
@@ -75,13 +67,6 @@ jobs:
           TF_LOG=DEBUG TF_LOG_PATH=./terraform-debug.log terraform plan -var="image_tag=$IMAGE_TAG" -out=tfplan
           echo "Plan debug log:"
           cat ./terraform-debug.log
-        working-directory: ./terraform
-
-      - name: Terraform Plan
-        run: |
-          echo "Creating secrets file..."
-          echo '${{ secrets.STATUS_PAGE_SECRETS }}' > secrets.auto.tfvars
-          terraform plan -var="image_tag=$IMAGE_TAG" -out=tfplan
         working-directory: ./terraform
 
       - name: Terraform Apply
